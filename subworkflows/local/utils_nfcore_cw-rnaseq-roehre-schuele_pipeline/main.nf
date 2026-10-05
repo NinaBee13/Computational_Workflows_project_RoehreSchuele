@@ -94,20 +94,20 @@ workflow PIPELINE_INITIALISATION {
     channel
         .fromList(samplesheetToList(input, "${projectDir}/assets/schema_input.json"))
         .map {
-            meta, fastq_1, fastq_2 ->
+            meta, fastq_1, fastq_2 -> // strandedness is already included in meta bc we defined it in the schema!
                 if (!fastq_2) {
                     return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
                 } else {
                     return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
                 }
-        }
-        .groupTuple()
+        } // meta map is created 
+        .groupTuple() // if a biological sample occurs in mutliple rows they get grouped together!
         .map { samplesheet ->
             validateInputSamplesheet(samplesheet)
         }
         .map {
             meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
+                return [ meta, fastqs.flatten() ] // we flatten potentially nested lists which occured bc our groupTuple
         }
         .set { ch_samplesheet }
 
