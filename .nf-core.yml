@@ -1,0 +1,64 @@
+repository_type: pipeline
+
+nf_core_version: 4.1.0
+
+lint:
+  files_unchanged:
+    - LICENSE
+    - CODE_OF_CONDUCT.md
+    - assets/nf-core-cw-rnaseq-roehre-schuele_logo_light.png
+    - docs/images/nf-core-cw-rnaseq-roehre-schuele_logo_light.png
+    - docs/images/nf-core-cw-rnaseq-roehre-schuele_logo_dark.png
+    - .github/ISSUE_TEMPLATE/bug_report.yml
+    - .github/PULL_REQUEST_TEMPLATE.md
+    - assets/email_template.txt
+    - docs/README.md
+    - docs/CONTRIBUTING.md
+    - .github/ISSUE_TEMPLATE/bug_report.yml
+    - .github/ISSUE_TEMPLATE/config.yml
+    - .github/ISSUE_TEMPLATE/feature_request.yml
+    - .github/PULL_REQUEST_TEMPLATE.md
+    - .github/workflows/branch.yml
+    - .github/workflows/pr-comment.yml
+    - .github/workflows/linting.yml
+    - .github/.dockstore.yml
+  nextflow_config:
+    - manifest.name
+    - manifest.homePage
+  multiqc_config:
+    - report_comment
+  files_exist:
+    - LICENSE
+    - CODE_OF_CONDUCT.md
+    - assets/nf-core-cw-rnaseq-roehre-schuele_logo_light.png
+    - docs/images/nf-core-cw-rnaseq-roehre-schuele_logo_light.png
+    - docs/images/nf-core-cw-rnaseq-roehre-schuele_logo_dark.png
+    - .github/ISSUE_TEMPLATE/config.yml
+    - .github/workflows/awstest.yml
+    - .github/workflows/awsfulltest.yml
+    - .github/ISSUE_TEMPLATE/bug_report.yml
+    - .github/ISSUE_TEMPLATE/feature_request.yml
+    - .github/PULL_REQUEST_TEMPLATE.md
+    - .github/.dockstore.yml
+    - docs/CONTRIBUTING.md
+  readme:
+    - nextflow_badge
+    - nfcore_template_badge
+    - nextflow_badge
+
+template:
+  org: NinaBee13
+  name: CW-rnaseq-Roehre-Schuele
+  description: Pipeline for analysing RNAseq data. Developed as part of the computational
+    workflows course, week 2.
+  author: "Nina R\xF6hre, Laura Sch\xFCle"
+  version: 1.0.0dev
+  force: true
+  outdir: /home/laura/computational-workflows-week2/Computational_Workflows_project_RoehreSchuele
+  skip_features:
+    - github
+    - github_badges
+    - license
+    - gpu
+    - codespaces
+  is_nfcore: false
