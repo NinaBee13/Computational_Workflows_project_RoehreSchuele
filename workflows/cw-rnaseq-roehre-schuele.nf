@@ -16,7 +16,7 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_cw-r
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow CW-RNASEQ-ROEHRE-SCHUELE {
+workflow CW_RNASEQ_ROEHRE_SCHUELE {
 
     take:
     ch_samplesheet // channel: samplesheet read in from --input

@@ -1,0 +1,2 @@
+sample,fastq_1,fastq_2,strandedness
+SRR25083113_1,/home/nina/e_coli_fasta/SRR25083113_1.fastq.gz,/home/nina/e_coli_fasta/SRR25083113_2.fastq.gz,auto

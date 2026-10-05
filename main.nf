@@ -13,7 +13,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CW-RNASEQ-ROEHRE-SCHUELE  } from './workflows/cw-rnaseq-roehre-schuele'
+include { CW_RNASEQ_ROEHRE_SCHUELE  } from './workflows/cw-rnaseq-roehre-schuele'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_cw-rnaseq-roehre-schuele_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_cw-rnaseq-roehre-schuele_pipeline'
 include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_cw-rnaseq-roehre-schuele_pipeline'
@@ -38,7 +38,7 @@ params.fasta = getGenomeAttribute('fasta')
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow NINABEE13_CW-RNASEQ-ROEHRE-SCHUELE {
+workflow NINABEE13_CW_RNASEQ_ROEHRE_SCHUELE {
 
     take:
     samplesheet // channel: samplesheet read in from --input
@@ -48,7 +48,7 @@ workflow NINABEE13_CW-RNASEQ-ROEHRE-SCHUELE {
     //
     // WORKFLOW: Run pipeline
     //
-    CW-RNASEQ-ROEHRE-SCHUELE (
+    CW_RNASEQ_ROEHRE_SCHUELE (
         samplesheet,
         params.multiqc_config,
         params.multiqc_logo,
@@ -56,7 +56,7 @@ workflow NINABEE13_CW-RNASEQ-ROEHRE-SCHUELE {
         params.outdir,
     )
     emit:
-    multiqc_report = CW-RNASEQ-ROEHRE-SCHUELE.out.multiqc_report // channel: /path/to/multiqc_report.html
+    multiqc_report = CW_RNASEQ_ROEHRE_SCHUELE.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,7 +85,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NINABEE13_CW-RNASEQ-ROEHRE-SCHUELE (
+    NINABEE13_CW_RNASEQ_ROEHRE_SCHUELE (
         PIPELINE_INITIALISATION.out.samplesheet
     )
     //
@@ -97,7 +97,7 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        NINABEE13_CW-RNASEQ-ROEHRE-SCHUELE.out.multiqc_report
+        NINABEE13_CW_RNASEQ_ROEHRE_SCHUELE.out.multiqc_report
     )
 }
 
