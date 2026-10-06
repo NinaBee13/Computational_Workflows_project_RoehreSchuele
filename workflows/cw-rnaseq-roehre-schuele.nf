@@ -15,6 +15,15 @@ include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pi
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_cw-rnaseq-roehre-schuele_pipeline'
 
+// MODULES NECESSARY FOR HISAT2 PREP - START (To be added into subworkflow once it runs and there is time)
+include { HISAT2_EXTRACTSPLICESITES         } from '../modules/nf-core/hisat2/extractsplicesites' // → extracts splicing sites from a gtf file, Input for: HISAT Build /Align 
+include { HISAT2_BUILD                      } from '../modules/nf-core/hisat2/build' // → Builds HISAT2 Index(set of files from reference genome for moreefficient aligning ), Creates input for HISAT2 ALign
+include { GUNZIP as GUNZIP_FASTA            } from '../modules/nf-core/gunzip'
+include { GUNZIP as GUNZIP_GTF              } from '../modules/nf-core/gunzip'
+include {UNTAR as UNTAR_HISAT2_INDEX        } from '../modules/nf-core/untar'
+//include { FASTQ_HISAT2_ALIGN                } from '../modules/nf-core/fastq_align_hisat2'
+// MODULES NECESSARY FOR HISAT2 PREP - END
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -29,6 +38,13 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     multiqc_logo // display multiqc logo in report
     multiqc_methods_description // optional text/template used for the methods section in the MultiQC report
     outdir
+        // HISAT PREP VAR - START
+    fasta
+    gtf 
+    //hisat2_index
+    //splicesites
+    //prepare_tool_indices // idk yet what this is for, probably for saving HISAT stuff
+    // HISAT PREP VAR- END
 
     main:
 
@@ -104,6 +120,41 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
             sort: true,
             newLine: true
         )
+    //
+    // MODULE: HISAT2 BUILD AND SPLICESITE DETECTION
+    //
+    
+    // Unzip fasta and gtf file using the processes created with GUNZIP Module
+    // ONly allows GTF usage for now
+    if (fasta.endsWith('.gz')) {
+      ch_fasta = GUNZIP_FASTA ( [ [:], fasta]).gunzip.map {it[1]}
+      //ch_versions = ch_versions.mix(GUNZIP_FASTA.out.versions) 
+      } else {
+      ch_fasta = Channel.value(file(fasta))}
+    
+
+    if (gtf.endsWith('.gz')) {
+      ch_gtf = GUNZIP_GTF ( [ [:] , gtf ] ).gunzip.map { it[1] }
+      //ch_versions = ch_versions.mix(GUNZIP_GTF.out.versions)
+    } else {
+      ch_gtf = Channel.value(file(gtf))
+    }
+  
+    
+    // Uncompress / Generate HISAT2 index from scratch
+    
+
+    ch_splicesites = HISAT2_EXTRACTSPLICESITES ( ch_gtf.map { [ [:], it ] } ).txt.map { it[1] }
+    //ch_versions    = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
+
+    ch_hisat2_index = HISAT2_BUILD ( ch_fasta
+    .concat(ch_gtf)
+    .concat(ch_splicesites)
+    .collect()
+    .map { fasta_file, gtf_file, splicesites_file ->
+        [[:], fasta_file, gtf_file, splicesites_file]
+    }, '7.GB').index.map { it[1] }
+    //ch_versions     = ch_versions.mix(HISAT2_BUILD.out.versions)
 
     //
     // MODULE: MultiQC (summary step at the end!)
@@ -131,8 +182,15 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
             ]
         }
     )
-    emit:multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    emit:
+    multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
+    //versions       = ch_versions  // channel: [ path(versions.yml) ]
+    fasta = ch_fasta // channel: path(genome.fasta)
+    gtf = ch_gtf // channel: path(genome.gtf)
+    splicesites = ch_splicesites //channel: path(genome.splicesites)
+    hisat2_index = ch_hisat2_index // channel: path(hisat2/index/)
+    
+    
 }
 
 /*

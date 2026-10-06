@@ -3,7 +3,8 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NinaBee13/cw-rnaseq-roehre-schuele
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/NinaBee13/cw-rnaseq-roehre-schuele
+    Github : https://github.com/NinaBee13/Computational_Workflows_project_RoehreSchuele
+
 ----------------------------------------------------------------------------------------
 */
 
@@ -54,6 +55,9 @@ workflow NINABEE13_CW_RNASEQ_ROEHRE_SCHUELE {
         params.multiqc_logo,
         params.multiqc_methods_description,
         params.outdir,
+        params.fasta,
+        params.gtf,
+        
     )
     emit:
     multiqc_report = CW_RNASEQ_ROEHRE_SCHUELE.out.multiqc_report // channel: /path/to/multiqc_report.html
