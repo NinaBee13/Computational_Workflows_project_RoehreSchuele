@@ -9,7 +9,14 @@
 include { FASTQC                 } from '../modules/nf-core/fastqc/main'
 include { FASTQC as FASTQC_TRIMMED }  from '../modules/nf-core/fastqc/main' // we include it again with an alias for the second run after trimming
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
+// Trimming:
+include { CAT_FASTQ } from '../modules/nf-core/cat/fastq/main' 
 include { FASTP                  } from '../modules/nf-core/fastp/main'
+// mark duplicate:
+include { SAMTOOLS_SORT } from '../modules/nf-core/samtools/sort/main'   
+include { PICARD_MARKDUPLICATES } from '../modules/nf-core/picard/markduplicates/main' 
+include { SAMTOOLS_FAIDX } from '../modules/nf-core/samtools/faidx/main' 
+
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -34,6 +41,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
 
     take: // inputs for workflow
     ch_samplesheet // channel: samplesheet read in from --input
+    fasta // reference genome
     multiqc_config //could change report apperance in this file
     multiqc_logo // display multiqc logo in report
     multiqc_methods_description // optional text/template used for the methods section in the MultiQC report
@@ -50,10 +58,15 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
 
     def ch_versions = channel.empty() // tracks the versions of tools
     def ch_multiqc_files = channel.empty() 
+
+    // for new test with multiple fastq:
+    CAT_FASTQ(ch_samplesheet)
+    ch_merged_reads = CAT_FASTQ.out.reads
+
     //
     // MODULE: Run FastQC
     //
-    FASTQC(ch_samplesheet)
+    FASTQC(ch_merged_reads)
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.map{ _meta, file -> file })
 
 
@@ -62,7 +75,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     //
 
     // first we need an input channel for fastp with all the required inputs
-    ch_fastp_input = ch_samplesheet.map { meta, reads ->
+    ch_fastp_input = ch_merged_reads.map { meta, reads ->
         [meta, reads, []] 
         // fastp need meta data, reads and possible adapters as input
         // since we dont have adapter file we pass an empty list []
@@ -92,6 +105,57 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC_TRIMMED.out.zip.map{ _meta, file -> file })
 
 
+    //
+    //MODULE: Alignment with Hisat2
+    //
+
+    //
+    //MODULE: Quantify with Salmon
+    //
+
+    //
+    //MODULE: Mark duplicate reads with picard_markduplicates
+    //
+    //could later add UMI step before this, enable with flag/parameter option
+    // for picard we need bam (get this from Hisat, maybe need to sort it), fasta (reference, from parameter)
+    // and we need fai (createthis from ref fasta parameter with samtools) 
+    // Hisat output: bam, log, fastq.gz,....
+    // fasta = refernec genome
+/*
+    // get reference genome and prepare it for nfcore picard:
+    ch_reference = Channel.value([
+    [id: 'genome'],
+    file(fasta)
+    ])
+
+    // use reference genome index for picard (fai file):
+    SAMTOOLS_FAIDX(
+    ch_reference,
+    false
+    )
+
+    // sort bam for picard:
+    SAMTOOLS_SORT(ch_bam) // here add Hisat output name!
+
+    // run Picard markduplicates:
+    PICARD_MARKDUPLICATES(
+    ch_bam,
+    ch_reference,
+    SAMTOOLS_FAIDX.out.fai
+    )
+/*
+    ch_genome_bam             = BAM_MARKDUPLICATES_PICARD.out.bam
+    ch_genome_bam_index       = BAM_MARKDUPLICATES_PICARD.out.bai
+    ch_samtools_stats         = BAM_MARKDUPLICATES_PICARD.out.stats
+    ch_samtools_flagstat      = BAM_MARKDUPLICATES_PICARD.out.flagstat
+    ch_samtools_idxstats      = BAM_MARKDUPLICATES_PICARD.out.idxstats
+    ch_markduplicates_multiqc = BAM_MARKDUPLICATES_PICARD.out.metrics
+    if (params.bam_csi_index) {
+        ch_genome_bam_index = BAM_MARKDUPLICATES_PICARD.out.csi
+    }
+*/
+
+        
     //
     // Collate and save software versions
     //
