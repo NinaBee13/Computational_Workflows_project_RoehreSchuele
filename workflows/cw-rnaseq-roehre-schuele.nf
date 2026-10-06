@@ -1,11 +1,15 @@
+// test run (outside of pipeline folder!):
+// nextflow run Computational_Workflows_project_RoehreSchuele -profile test,docker --outdir test_results
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { FASTQC                 } from '../modules/nf-core/fastqc/main'
+include { FASTQC as FASTQC_TRIMMED }  from '../modules/nf-core/fastqc/main' // we include it again with an alias for the second run after trimming
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
-
+include { FASTP                  } from '../modules/nf-core/fastp/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -19,22 +23,58 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_cw-r
 
 workflow CW_RNASEQ_ROEHRE_SCHUELE {
 
-    take:
+    take: // inputs for workflow
     ch_samplesheet // channel: samplesheet read in from --input
-    multiqc_config
-    multiqc_logo
-    multiqc_methods_description
+    multiqc_config //could change report apperance in this file
+    multiqc_logo // display multiqc logo in report
+    multiqc_methods_description // optional text/template used for the methods section in the MultiQC report
     outdir
 
     main:
 
-    def ch_versions = channel.empty()
-    def ch_multiqc_files = channel.empty()
+    def ch_versions = channel.empty() // tracks the versions of tools
+    def ch_multiqc_files = channel.empty() 
     //
     // MODULE: Run FastQC
     //
     FASTQC(ch_samplesheet)
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.map{ _meta, file -> file })
+
+
+    //
+    // MODULE: Trim reads with fastp (in larger pipelines we could wrap this in a subworkflow)
+    //
+
+    // first we need an input channel for fastp with all the required inputs
+    ch_fastp_input = ch_samplesheet.map { meta, reads ->
+        [meta, reads, []] 
+        // fastp need meta data, reads and possible adapters as input
+        // since we dont have adapter file we pass an empty list []
+    }
+
+    // then we can actually run fastp
+    FASTP(
+        ch_fastp_input,
+        false,  // From documentation: Specify true to not write any reads that pass trimming thresholds. This can be used to use fastp for the output report only.
+        false,  // Specify true to save files that failed to pass trimming thresholds ending in *.fail.fastq.gz
+        false   // Specify true to save all merged reads to a file ending in *.merged.fastq.gz
+    )
+    // we can check which output fastp produces to know how to handle them:
+    // sed -n '/output:/,/when:/p' modules/nf-core/fastp/main.nf
+
+    // we also need to include version information and mix with multiQC!
+    //ch_versions = ch_versions.mix(FASTP.out.versions_fastp) // I think we dont need to collect ther version information ourselfs bc of the topic channel!
+
+    ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.json.map{ _meta, file -> file })
+    //ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.html.map{ _meta, file -> file })
+
+    // fastp output we want to pass the aligner:
+    ch_trimmed_reads = FASTP.out.reads
+
+    // rnaseq runs FASTQC here again and so do we:
+    FASTQC_TRIMMED(ch_trimmed_reads)
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC_TRIMMED.out.zip.map{ _meta, file -> file })
+
 
     //
     // Collate and save software versions
@@ -66,7 +106,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
         )
 
     //
-    // MODULE: MultiQC
+    // MODULE: MultiQC (summary step at the end!)
     //
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
     def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
