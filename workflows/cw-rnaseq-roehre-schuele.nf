@@ -44,7 +44,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
 
     take: // inputs for workflow
     ch_samplesheet // channel: samplesheet read in from --input
-    fasta // reference genome
+    //fasta // reference genome
     multiqc_config //could change report apperance in this file
     multiqc_logo // display multiqc logo in report
     multiqc_methods_description // optional text/template used for the methods section in the MultiQC report
@@ -212,23 +212,43 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     // Uncompress / Generate HISAT2 index from scratch
     
 
-    ch_splicesites = HISAT2_EXTRACTSPLICESITES ( ch_gtf.map { [ [:], it ] } ).txt.map { it[1] }
+    ch_splicesites = HISAT2_EXTRACTSPLICESITES ( ch_gtf.map { [ [:], it ] } ).txt
     //ch_versions    = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
 
     ch_hisat2_index = HISAT2_BUILD ( ch_fasta
     .concat(ch_gtf)
-    .concat(ch_splicesites)
+    .concat(ch_splicesites.map { it[1] })
     .collect()
     .map { fasta_file, gtf_file, splicesites_file ->
         [[:], fasta_file, gtf_file, splicesites_file]
-    }, '7.GB').index.map { it[1] }
-    //ch_versions     = ch_versions.mix(HISAT2_BUILD.out.versions)
+    }, '7.GB').index
 
+    ch_fasta_fai = ch_fasta.map {
+        fasta_file -> [
+            [id: 'reference'],
+            fasta_file,
+            []
+        ]
+    }
+
+    SAMTOOLS_FAIDX(ch_fasta_fai,
+    false)
+
+    ch_fasta_fai = ch_fasta.combine(SAMTOOLS_FAIDX.out.fai.map {meta, fai -> fai}).map{fasta_file, fai_file -> [
+        [id: 'reference'],
+        fasta_file,
+        fai_file
+    ]}
+    
+    //HISAT2_BUILD.out.index.view { "HISAT2 INDEX OUTPUT: $it" }
+    //
+    //ch_versions     = ch_versions.mix(HISAT2_BUILD.out.versions)
+ 
     // Alignment using HISAT Align and subworkflow fastq_align_hisat2
     ch_hisat2_multiqc = Channel.empty()
-    FASTQ_ALIGN_HISAT2(ch_filtered_fastq, ch_hisat2_index.map{[[:], it]},ch_splicesites.map{[[:], it]}, ch_fasta.map{[[:], it]})
+    FASTQ_ALIGN_HISAT2(ch_trimmed_reads, ch_hisat2_index,ch_splicesites, ch_fasta_fai,true)
         ch_genome_bam        = FASTQ_ALIGN_HISAT2.out.bam
-        ch_genome_bam_index  = FASTQ_ALIGN_HISAT2.out.bai
+        //ch_genome_bam_index  = FASTQ_ALIGN_HISAT2.out.bai
         ch_samtools_stats    = FASTQ_ALIGN_HISAT2.out.stats
         ch_samtools_flagstat = FASTQ_ALIGN_HISAT2.out.flagstat
         ch_samtools_idxstats = FASTQ_ALIGN_HISAT2.out.idxstats
