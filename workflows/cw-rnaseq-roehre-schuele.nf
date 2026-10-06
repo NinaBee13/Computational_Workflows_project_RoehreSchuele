@@ -31,6 +31,9 @@ include {UNTAR as UNTAR_HISAT2_INDEX        } from '../modules/nf-core/untar'
 //include { FASTQ_HISAT2_ALIGN                } from '../modules/nf-core/fastq_align_hisat2'
 // MODULES NECESSARY FOR HISAT2 PREP - END
 
+//MODULES NECESSARY TO ALIGN WITH: HISAT - START
+include { FASTQ_ALIGN_HISAT2               } from '../subworkflows/nf-core/fastq_align_hisat2'
+//MODULES NECESSARY TO ALIGN WITH: HISAT - END
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -184,6 +187,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
             sort: true,
             newLine: true
         )
+        
     //
     // MODULE: HISAT2 BUILD AND SPLICESITE DETECTION
     //
@@ -220,9 +224,21 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     }, '7.GB').index.map { it[1] }
     //ch_versions     = ch_versions.mix(HISAT2_BUILD.out.versions)
 
+    // Alignment using HISAT Align and subworkflow fastq_align_hisat2
+    ch_hisat2_multiqc = Channel.empty()
+    FASTQ_ALIGN_HISAT2(ch_filtered_fastq, ch_hisat2_index.map{[[:], it]},ch_splicesites.map{[[:], it]}, ch_fasta.map{[[:], it]})
+        ch_genome_bam        = FASTQ_ALIGN_HISAT2.out.bam
+        ch_genome_bam_index  = FASTQ_ALIGN_HISAT2.out.bai
+        ch_samtools_stats    = FASTQ_ALIGN_HISAT2.out.stats
+        ch_samtools_flagstat = FASTQ_ALIGN_HISAT2.out.flagstat
+        ch_samtools_idxstats = FASTQ_ALIGN_HISAT2.out.idxstats
+        ch_hisat2_multiqc    = FASTQ_ALIGN_HISAT2.out.summary
+
+    
     //
     // MODULE: MultiQC (summary step at the end!)
     //
+    
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
     def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
     def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
@@ -246,6 +262,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
             ]
         }
     )
+    
     emit:
     multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
     //versions       = ch_versions  // channel: [ path(versions.yml) ]
