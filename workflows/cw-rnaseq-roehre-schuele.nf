@@ -37,6 +37,14 @@ include { RSEM_PREPAREREFERENCE as MAKE_TRANSCRIPTS_FASTA } from '../modules/nf-
 include { SALMON_INDEX } from '../modules/nf-core/salmon/index/main'
 include { SALMON_QUANT } from '../modules/nf-core/salmon/quant/main' 
 
+//Salmon Quantification:
+include { RSEM_PREPAREREFERENCE as MAKE_TRANSCRIPTS_FASTA } from '../modules/nf-core/rsem/preparereference/main'
+include { SALMON_INDEX } from '../modules/nf-core/salmon/index/main'
+include { SALMON_QUANT } from '../modules/nf-core/salmon/quant/main' 
+
+//MODULES NECESSARY TO ALIGN WITH: HISAT - START
+include { FASTQ_ALIGN_HISAT2               } from '../subworkflows/nf-core/fastq_align_hisat2'
+//MODULES NECESSARY TO ALIGN WITH: HISAT - END
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -47,7 +55,6 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
 
     take: // inputs for workflow
     ch_samplesheet // channel: samplesheet read in from --input
-    //fasta // reference genome
     multiqc_config //could change report apperance in this file
     multiqc_logo // display multiqc logo in report
     multiqc_methods_description // optional text/template used for the methods section in the MultiQC report
@@ -138,6 +145,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
             sort: true,
             newLine: true
         )
+        
     //
     // MODULE: HISAT2 BUILD AND SPLICESITE DETECTION
     //
@@ -162,65 +170,48 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     // Uncompress / Generate HISAT2 index from scratch
     
 
-    ch_splicesites = HISAT2_EXTRACTSPLICESITES ( ch_gtf.map { [ [:], it ] } ).txt.map { it[1] }
+    ch_splicesites = HISAT2_EXTRACTSPLICESITES ( ch_gtf.map { [ [:], it ] } ).txt
     //ch_versions    = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
 
     // Build index:
     ch_hisat2_index = HISAT2_BUILD ( ch_fasta
     .concat(ch_gtf)
-    .concat(ch_splicesites) // put files in one stream
-    .collect() // stream to list
+    .concat(ch_splicesites.map { it[1] })
+    .collect()
     .map { fasta_file, gtf_file, splicesites_file ->
         [[:], fasta_file, gtf_file, splicesites_file]
-    }, '7.GB').index.map { it[1] }
-    //ch_versions     = ch_versions.mix(HISAT2_BUILD.out.versions)
+    }, '7.GB').index
 
-
-    ch_fasta_for_faidx = ch_fasta.map { fasta_file ->
-        [
+    ch_fasta_fai = ch_fasta.map {
+        fasta_file -> [
             [id: 'reference'],
             fasta_file,
             []
         ]
     }
-    SAMTOOLS_FAIDX(
-    ch_fasta_for_faidx,
-    false
-    )
 
-    // combine fasta and fai as ecpected by hisat:
-    ch_fasta_fai = ch_fasta
-    .combine(
-        SAMTOOLS_FAIDX.out.fai.map { meta, fai ->
-            fai
-        }
-    )
-    .map { fasta_file, fai_file ->
-        [
-            [id: 'reference'],
-            fasta_file,
-            fai_file
-        ]
-    }
+    SAMTOOLS_FAIDX(ch_fasta_fai,
+    false)
 
-// Add metadata back to HISAT2 index
-ch_hisat2_index_for_align = ch_hisat2_index.map { index ->
-    [[id: 'reference'], index]
-}
-
-// Add metadata back to splice sites
-ch_splicesites_for_align = ch_splicesites.map { splicesites ->
-    [[id: 'reference'], splicesites]
-}
-
-// Run alignment
-FASTQ_HISAT2_ALIGN(
-    ch_trimmed_reads,
-    ch_hisat2_index_for_align,
-    ch_splicesites_for_align,
-    ch_fasta_fai,
-    false
-)
+    ch_fasta_fai = ch_fasta.combine(SAMTOOLS_FAIDX.out.fai.map {meta, fai -> fai}).map{fasta_file, fai_file -> [
+        [id: 'reference'],
+        fasta_file,
+        fai_file
+    ]}
+    
+    //HISAT2_BUILD.out.index.view { "HISAT2 INDEX OUTPUT: $it" }
+    //
+    //ch_versions     = ch_versions.mix(HISAT2_BUILD.out.versions)
+ 
+    // Alignment using HISAT Align and subworkflow fastq_align_hisat2
+    ch_hisat2_multiqc = Channel.empty()
+    FASTQ_ALIGN_HISAT2(ch_trimmed_reads, ch_hisat2_index,ch_splicesites, ch_fasta_fai,true)
+        ch_genome_bam        = FASTQ_ALIGN_HISAT2.out.bam
+        //ch_genome_bam_index  = FASTQ_ALIGN_HISAT2.out.bai
+        ch_samtools_stats    = FASTQ_ALIGN_HISAT2.out.stats
+        ch_samtools_flagstat = FASTQ_ALIGN_HISAT2.out.flagstat
+        ch_samtools_idxstats = FASTQ_ALIGN_HISAT2.out.idxstats
+        ch_hisat2_multiqc    = FASTQ_ALIGN_HISAT2.out.summary
 
     //
     //MODULE: Quantify with Salmon
@@ -318,6 +309,7 @@ FASTQ_HISAT2_ALIGN(
     //
     // MODULE: MultiQC (summary step at the end!)
     //
+    
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
     def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
     def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
@@ -341,6 +333,7 @@ FASTQ_HISAT2_ALIGN(
             ]
         }
     )
+    
     emit:
     multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
     //versions       = ch_versions  // channel: [ path(versions.yml) ]
