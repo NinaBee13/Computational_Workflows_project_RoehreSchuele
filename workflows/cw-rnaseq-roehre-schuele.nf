@@ -30,8 +30,7 @@ include { HISAT2_BUILD                      } from '../modules/nf-core/hisat2/bu
 include { GUNZIP as GUNZIP_FASTA            } from '../modules/nf-core/gunzip'
 include { GUNZIP as GUNZIP_GTF              } from '../modules/nf-core/gunzip'
 include {UNTAR as UNTAR_HISAT2_INDEX        } from '../modules/nf-core/untar'
-//include { FASTQ_HISAT2_ALIGN              } from '../modules/nf-core/fastq_align_hisat2'
-include { FASTQ_HISAT2_ALIGN                } from '../subworkflows/nf-core/fastq_align_hisat2'
+
 // MODULES NECESSARY FOR HISAT2 PREP - END
 
 //Salmon Quantification:
@@ -218,6 +217,11 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
         ch_samtools_flagstat = FASTQ_HISAT2_ALIGN.out.flagstat
         ch_samtools_idxstats = FASTQ_HISAT2_ALIGN.out.idxstats
         ch_hisat2_multiqc    = FASTQ_HISAT2_ALIGN.out.summary
+    
+    ch_multiqc_files = ch_multiqc_files
+    .mix(ch_samtools_stats.map { meta, file -> file })
+    .mix(ch_samtools_flagstat.map { meta, file -> file })
+    .mix(ch_samtools_idxstats.map { meta, file -> file })
 
     //
     //MODULE: Quantify with Salmon
@@ -265,12 +269,16 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     ch_pseudo_multiqc = ch_pseudo_results
 
     ch_multiqc_files = ch_multiqc_files.mix(
-    SALMON_QUANT.out.json_info.map { meta, file -> file }
-    )
+    SALMON_QUANT.out.results.map { meta, dir -> dir }
+)
 
-    ch_multiqc_files = ch_multiqc_files.mix(
-    SALMON_QUANT.out.lib_format_counts.map { meta, file -> file }
-    )
+    //ch_multiqc_files = ch_multiqc_files.mix(
+    //SALMON_QUANT.out.json_info.map { meta, file -> file }
+    //)
+
+    //ch_multiqc_files = ch_multiqc_files.mix(
+    //SALMON_QUANT.out.lib_format_counts.map { meta, file -> file }
+    //)
 
     // TX QUANTIFICATION
 
@@ -293,10 +301,9 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
         CUSTOM_TX2GENE.out.tx2gene,
         'salmon'
     )
-
-
-
-
+    ch_multiqc_files = ch_multiqc_files.mix(
+    TXIMETA_TXIMPORT.out.tpm_gene.map { _meta, f -> f }
+)
 
 
     //
