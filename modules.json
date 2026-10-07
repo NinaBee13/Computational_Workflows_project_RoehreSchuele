@@ -10,6 +10,11 @@
                         "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
                         "installed_by": ["modules"]
                     },
+                    "custom/tx2gene": {
+                        "branch": "master",
+                        "git_sha": "1a6066c338c5b345115b953d3c03e8de2cb63f78",
+                        "installed_by": ["modules"]
+                    },
                     "fastp": {
                         "branch": "master",
                         "git_sha": "826a9b28d6da61097d60e1923bb8a2e51de3c5b4",
@@ -50,9 +55,19 @@
                         "git_sha": "fe08122c3dc2f2d7890daba06f6c90e570ef01de",
                         "installed_by": ["modules"]
                     },
+                    "rsem/preparereference": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
                     "salmon/index": {
                         "branch": "master",
                         "git_sha": "53daf6285b9fbf1164b4dcab41da6e70e1f2f721",
+                        "installed_by": ["modules"]
+                    },
+                    "salmon/quant": {
+                        "branch": "master",
+                        "git_sha": "225ce36098d83f8c355c4bb8684f8205350c288e",
                         "installed_by": ["modules"]
                     },
                     "samtools/faidx": {
@@ -84,6 +99,11 @@
                         "branch": "master",
                         "git_sha": "9339809fcb90af8a8b7051e6cd914894d5c52002",
                         "installed_by": ["bam_stats_samtools"]
+                    },
+                    "tximeta/tximport": {
+                        "branch": "master",
+                        "git_sha": "2e17764b67b7613c0a420c3f13d9360c3377bee8",
+                        "installed_by": ["modules"]
                     },
                     "untar": {
                         "branch": "master",
