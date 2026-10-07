@@ -219,7 +219,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     // salmon expects an transcript fasta file, in rnaseq this is build with RSM (we included RSM here as MAKE_TRANSCRIPTS_FASTA)
     ch_transcript_fasta = MAKE_TRANSCRIPTS_FASTA(ch_fasta, ch_gtf).transcript_fasta
 
-
+    /*
     ch_salmon_index_input = ch_transcript_fasta
     .combine(ch_fasta)
     .map { transcript_fasta, genome_fasta ->
@@ -229,6 +229,9 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
             genome_fasta
         ]
     }
+    */
+    
+
     ch_salmon_index = SALMON_INDEX(ch_salmon_index_input).index
     
     //ch_salmon_index_for_quant = ch_salmon_index.map { index -> [[id: 'reference'], index]}
