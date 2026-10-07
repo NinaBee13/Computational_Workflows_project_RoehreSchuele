@@ -30,8 +30,6 @@ include { HISAT2_BUILD                      } from '../modules/nf-core/hisat2/bu
 include { GUNZIP as GUNZIP_FASTA            } from '../modules/nf-core/gunzip'
 include { GUNZIP as GUNZIP_GTF              } from '../modules/nf-core/gunzip'
 include {UNTAR as UNTAR_HISAT2_INDEX        } from '../modules/nf-core/untar'
-//include { FASTQ_HISAT2_ALIGN              } from '../modules/nf-core/fastq_align_hisat2'
-include { FASTQ_HISAT2_ALIGN                } from '../subworkflows/nf-core/fastq_align_hisat2'
 // MODULES NECESSARY FOR HISAT2 PREP - END
 
 //Salmon Quantification:
@@ -294,11 +292,6 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
         'salmon'
     )
 
-
-
-
-
-
     //
     //MODULE: Mark duplicate reads with picard_markduplicates
     //
@@ -307,13 +300,8 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     // First we check which input picard needs:
     //sed -n '/input:/,/output:/p' \modules/nf-core/picard/markduplicates/main.nf input:
     //input:
-    //tuple val(meta), path(reads)
-    //tuple val(meta2), path(fasta), path(fai)
-
-
-    //tuple val(meta), path(reads): reads are the sorted bam we get from Hisat
-    //ch_picard_input1 = ch_genome_bam.map{reads -> [[:], reads]}
-
+    //tuple val(meta), path(reads) -> input1 = ch_genome_bam
+    //tuple val(meta2), path(fasta), path(fai) -> create extra channel for input2
 
     //tuple val(meta2), path(fasta), path(fai)
     // get reference genome and prepare it for nfcore picard:
@@ -326,30 +314,14 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     
     // run Picard markduplicates:
     PICARD_MARKDUPLICATES(
-    //ch_picard_input1,
     ch_genome_bam,
     ch_picard_input2
     )
-/* test:
-cd ~/computational-workflows-week2
 
-nextflow run Computational_Workflows_project_RoehreSchuele \
-  -profile test,docker \
-  --outdir test_results
-*/
-
-
-/*
-    ch_genome_bam             = BAM_MARKDUPLICATES_PICARD.out.bam
-    ch_genome_bam_index       = BAM_MARKDUPLICATES_PICARD.out.bai
-    ch_samtools_stats         = BAM_MARKDUPLICATES_PICARD.out.stats
-    ch_samtools_flagstat      = BAM_MARKDUPLICATES_PICARD.out.flagstat
-    ch_samtools_idxstats      = BAM_MARKDUPLICATES_PICARD.out.idxstats
-    ch_markduplicates_multiqc = BAM_MARKDUPLICATES_PICARD.out.metrics
-    if (params.bam_csi_index) {
-        ch_genome_bam_index = BAM_MARKDUPLICATES_PICARD.out.csi
-    }
-*/
+    // add picard to multiqc report
+    ch_multiqc_files = ch_multiqc_files.mix(
+        PICARD_MARKDUPLICATES.out.metrics.map { meta, file -> file }
+    )
 
     //
     // MODULE: MultiQC (summary step at the end!)
@@ -387,8 +359,6 @@ nextflow run Computational_Workflows_project_RoehreSchuele \
     splicesites = ch_splicesites //channel: path(genome.splicesites)
     hisat2_index = ch_hisat2_index // channel: path(hisat2/index/)
     salmon_results = SALMON_QUANT.out.results
-
-    
     
 }
 

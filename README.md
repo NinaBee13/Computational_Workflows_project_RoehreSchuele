@@ -9,6 +9,11 @@
    major pipeline sections and the types of output it produces. You're giving an overview to someone new
    to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
 -->
+The pipeline accepts single-end or paired-end FASTQ files, including multiple
+sequencing runs per biological sample. Reads are merged per sample, quality
+controlled and trimmed before being processed in two parallel analysis branches.
+HISAT2 is used for genome alignment and Salmon for transcript/gene abundance
+estimation. Alignment and quality-control statistics are summarized with MultiQC.
 
 <!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
      workflows use the "tube map" design for that. See https://nf-co.re/docs/community/brand/workflow-schematics#examples for examples.   -->
@@ -34,17 +39,34 @@ CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
 Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
 
 -->
+### Samplesheet
+
+The input samplesheet must contain the following columns:
+
+```csv
+sample,fastq_1,fastq_2,strandedness
+WT_REP1,/path/run1_R1.fastq.gz,/path/run1_R2.fastq.gz,reverse
+WT_REP1,/path/run2_R1.fastq.gz,/path/run2_R2.fastq.gz,reverse
+WT_REP2,/path/WT_REP2_R1.fastq.gz,/path/WT_REP2_R2.fastq.gz,reverse
 
 Now, you can run the pipeline using:
 
+```bash
+nextflow run NinaBee13/cw-rnaseq-roehre-schuele \
+    -profile docker \
+    --input samplesheet.csv \
+    --fasta reference.fa \
+    --gtf annotation.gtf \
+    --outdir results
+
 <!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
+
+For a minimal example run:
 
 ```bash
 nextflow run NinaBee13/cw-rnaseq-roehre-schuele \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
-   --outdir <OUTDIR>
-```
+    -profile test,docker \
+    --outdir test_results
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/running/run-pipelines#using-parameter-files).
