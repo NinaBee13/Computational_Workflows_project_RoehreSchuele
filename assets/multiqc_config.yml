@@ -12,3 +12,17 @@ report_section_order:
 export_plots: true
 
 disable_version_detection: true
+
+# Trying to add TPM table to multiqc
+custom_data:
+  gene_tpm:
+    id: "gene_tpm"
+    section_name: "Transcripts per Million (TPM) gene table"
+    description: "TPM per gene and sample"
+    plot_type: "table"
+
+sp:
+  gene_tpm:
+    fn: "*gene_tpm.tsv"
+
+max_table_rows: 10000

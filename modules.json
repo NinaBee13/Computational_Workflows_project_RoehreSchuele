@@ -15,6 +15,11 @@
                         "git_sha": "1a6066c338c5b345115b953d3c03e8de2cb63f78",
                         "installed_by": ["modules"]
                     },
+                    "deseq2/differential": {
+                        "branch": "master",
+                        "git_sha": "3ee90f6092b63bbdcb2218687c7bf6dcda1967b8",
+                        "installed_by": ["modules"]
+                    },
                     "fastp": {
                         "branch": "master",
                         "git_sha": "826a9b28d6da61097d60e1923bb8a2e51de3c5b4",
