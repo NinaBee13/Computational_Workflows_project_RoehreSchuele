@@ -1,6 +1,8 @@
 // test run (outside of pipeline folder!):
 // nextflow run Computational_Workflows_project_RoehreSchuele -profile test,docker --outdir test_results
 
+// last sentence: produce table of TPM by genes and per sample
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
@@ -28,8 +30,6 @@ include { HISAT2_BUILD                      } from '../modules/nf-core/hisat2/bu
 include { GUNZIP as GUNZIP_FASTA            } from '../modules/nf-core/gunzip'
 include { GUNZIP as GUNZIP_GTF              } from '../modules/nf-core/gunzip'
 include {UNTAR as UNTAR_HISAT2_INDEX        } from '../modules/nf-core/untar'
-//include { FASTQ_HISAT2_ALIGN                } from '../modules/nf-core/fastq_align_hisat2'
-include { FASTQ_HISAT2_ALIGN                } from '../subworkflows/nf-core/fastq_align_hisat2'
 // MODULES NECESSARY FOR HISAT2 PREP - END
 
 //Salmon Quantification:
@@ -37,13 +37,8 @@ include { RSEM_PREPAREREFERENCE as MAKE_TRANSCRIPTS_FASTA } from '../modules/nf-
 include { SALMON_INDEX } from '../modules/nf-core/salmon/index/main'
 include { SALMON_QUANT } from '../modules/nf-core/salmon/quant/main' 
 
-//Salmon Quantification:
-include { RSEM_PREPAREREFERENCE as MAKE_TRANSCRIPTS_FASTA } from '../modules/nf-core/rsem/preparereference/main'
-include { SALMON_INDEX } from '../modules/nf-core/salmon/index/main'
-include { SALMON_QUANT } from '../modules/nf-core/salmon/quant/main' 
-
 //MODULES NECESSARY TO ALIGN WITH: HISAT - START
-include { FASTQ_ALIGN_HISAT2               } from '../subworkflows/nf-core/fastq_align_hisat2'
+include { FASTQ_HISAT2_ALIGN } from '../subworkflows/nf-core/fastq_align_hisat2/main'
 //MODULES NECESSARY TO ALIGN WITH: HISAT - END
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -182,6 +177,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
         [[:], fasta_file, gtf_file, splicesites_file]
     }, '7.GB').index
 
+
     ch_fasta_fai = ch_fasta.map {
         fasta_file -> [
             [id: 'reference'],
@@ -198,6 +194,8 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
         fasta_file,
         fai_file
     ]}
+
+    ch_fasta_fai_for_align = ch_fasta_fai.first()
     
     //HISAT2_BUILD.out.index.view { "HISAT2 INDEX OUTPUT: $it" }
     //
@@ -205,13 +203,13 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
  
     // Alignment using HISAT Align and subworkflow fastq_align_hisat2
     ch_hisat2_multiqc = Channel.empty()
-    FASTQ_ALIGN_HISAT2(ch_trimmed_reads, ch_hisat2_index,ch_splicesites, ch_fasta_fai,true)
-        ch_genome_bam        = FASTQ_ALIGN_HISAT2.out.bam
+    FASTQ_HISAT2_ALIGN(ch_trimmed_reads, ch_hisat2_index,ch_splicesites, ch_fasta_fai,true)
+        ch_genome_bam        = FASTQ_HISAT2_ALIGN.out.bam
         //ch_genome_bam_index  = FASTQ_ALIGN_HISAT2.out.bai
-        ch_samtools_stats    = FASTQ_ALIGN_HISAT2.out.stats
-        ch_samtools_flagstat = FASTQ_ALIGN_HISAT2.out.flagstat
-        ch_samtools_idxstats = FASTQ_ALIGN_HISAT2.out.idxstats
-        ch_hisat2_multiqc    = FASTQ_ALIGN_HISAT2.out.summary
+        ch_samtools_stats    = FASTQ_HISAT2_ALIGN.out.stats
+        ch_samtools_flagstat = FASTQ_HISAT2_ALIGN.out.flagstat
+        ch_samtools_idxstats = FASTQ_HISAT2_ALIGN.out.idxstats
+        ch_hisat2_multiqc    = FASTQ_HISAT2_ALIGN.out.summary
 
     //
     //MODULE: Quantify with Salmon
@@ -219,7 +217,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     // salmon expects an transcript fasta file, in rnaseq this is build with RSM (we included RSM here as MAKE_TRANSCRIPTS_FASTA)
     ch_transcript_fasta = MAKE_TRANSCRIPTS_FASTA(ch_fasta, ch_gtf).transcript_fasta
 
-    /*
+    
     ch_salmon_index_input = ch_transcript_fasta
     .combine(ch_fasta)
     .map { transcript_fasta, genome_fasta ->
@@ -229,12 +227,16 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
             genome_fasta
         ]
     }
-    */
-    
+    /*
+    ch_salmon_index = SALMON_INDEX(
+                ch_transcript_fasta.map { item -> [ [:], item, [] ] }
+            ).index.first()       
+    */ 
 
     ch_salmon_index = SALMON_INDEX(ch_salmon_index_input).index
     
-    //ch_salmon_index_for_quant = ch_salmon_index.map { index -> [[id: 'reference'], index]}
+    
+    ch_salmon_index_for_quant = ch_salmon_index.map { index -> [[id: 'reference'], index]}
 
     // check which input is required:
     // sed -n '/input:/,/output:/p' \modules/nf-core/salmon/quant/main.nf input:
@@ -269,34 +271,42 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     //MODULE: Mark duplicate reads with picard_markduplicates
     //
     //could later add UMI step before this, enable with flag/parameter option
-    // for picard we need bam (get this from Hisat, maybe need to sort it), fasta (reference, from parameter)
-    //ch_sorted_bam = FASTQ_ALIGN_HISAT2.out.bam
-    // and we need fai (createthis from ref fasta parameter with samtools) 
-    // -> also get fai from Hisat subworkflow!
-    // Hisat output: bam, log, fastq.gz,....
-    // fasta = refernec genome
-/*
+
+    // First we check which input picard needs:
+    //sed -n '/input:/,/output:/p' \modules/nf-core/picard/markduplicates/main.nf input:
+    //input:
+    //tuple val(meta), path(reads)
+    //tuple val(meta2), path(fasta), path(fai)
+
+
+    //tuple val(meta), path(reads): reads are the sorted bam we get from Hisat
+    //ch_picard_input1 = ch_genome_bam.map{reads -> [[:], reads]}
+
+
+    //tuple val(meta2), path(fasta), path(fai)
     // get reference genome and prepare it for nfcore picard:
-    ch_reference = Channel.value([
-    [id: 'genome'],
-    file(fasta)
-    ])
-
-    // use reference genome index for picard (fai file):
-    SAMTOOLS_FAIDX(
-    ch_reference,
-    false
-    )
-
-    // sort bam for picard:
-    SAMTOOLS_SORT(ch_bam) // here add Hisat output name!
-
+    //ch_picard_input2 = ch_fasta.map{ fasta_file -> [ [id: 'reference'], fasta_file,]}
+    ch_picard_input2 = ch_fasta.combine(SAMTOOLS_FAIDX.out.fai.map {meta, fai -> fai}).map{fasta_file, fai_file -> [
+        [id: 'reference'],
+        fasta_file,
+        fai_file
+    ]}.first()
+    
     // run Picard markduplicates:
     PICARD_MARKDUPLICATES(
-    ch_bam,
-    ch_reference,
-    SAMTOOLS_FAIDX.out.fai
+    //ch_picard_input1,
+    ch_genome_bam,
+    ch_picard_input2
     )
+/* test:
+cd ~/computational-workflows-week2
+
+nextflow run Computational_Workflows_project_RoehreSchuele \
+  -profile test,docker \
+  --outdir test_results
+*/
+
+
 /*
     ch_genome_bam             = BAM_MARKDUPLICATES_PICARD.out.bam
     ch_genome_bam_index       = BAM_MARKDUPLICATES_PICARD.out.bai

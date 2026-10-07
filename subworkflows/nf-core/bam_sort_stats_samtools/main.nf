@@ -12,7 +12,17 @@ workflow BAM_SORT_STATS_SAMTOOLS {
     ch_fasta_fai // channel: [ val(meta), path(fasta), path(fai) ]
 
     main:
-    SAMTOOLS_SORT(ch_bam, ch_fasta_fai, '')
+    // we need to make the reference reusable for every BAM
+    // we take first item from queue channel (item = whole tuple [val(meta), path(fasta), path(fai) ])
+    // and .first() transforms this into a reusbale value channel
+    ch_fasta_fai_value = ch_fasta_fai.first()
+
+    SAMTOOLS_SORT(
+        ch_bam, 
+        //ch_fasta_fai,
+        ch_fasta_fai_value,
+         ''
+    )
 
     SAMTOOLS_INDEX(SAMTOOLS_SORT.out.bam)
 
@@ -20,7 +30,11 @@ workflow BAM_SORT_STATS_SAMTOOLS {
         .join(SAMTOOLS_INDEX.out.index, by: [0])
         .set { ch_bam_bai }
 
-    BAM_STATS_SAMTOOLS(ch_bam_bai, ch_fasta_fai)
+    BAM_STATS_SAMTOOLS(
+        ch_bam_bai, 
+        //ch_fasta_fai
+        ch_fasta_fai_value
+    )
 
     emit:
     bam      = SAMTOOLS_SORT.out.bam // channel: [ val(meta), [ bam ] ]
