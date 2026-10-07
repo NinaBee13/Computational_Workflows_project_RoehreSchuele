@@ -45,6 +45,31 @@
                         "git_sha": "98403d15b0e50edae1f3fec5eae5e24982f1fade",
                         "installed_by": ["modules"]
                     },
+                    "picard/markduplicates": {
+                        "branch": "master",
+                        "git_sha": "fe08122c3dc2f2d7890daba06f6c90e570ef01de",
+                        "installed_by": ["modules"]
+                    },
+                    "rsem/preparereference": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
+                    "salmon/index": {
+                        "branch": "master",
+                        "git_sha": "53daf6285b9fbf1164b4dcab41da6e70e1f2f721",
+                        "installed_by": ["modules"]
+                    },
+                    "salmon/quant": {
+                        "branch": "master",
+                        "git_sha": "225ce36098d83f8c355c4bb8684f8205350c288e",
+                        "installed_by": ["modules"]
+                    },
+                    "samtools/faidx": {
+                        "branch": "master",
+                        "git_sha": "9339809fcb90af8a8b7051e6cd914894d5c52002",
+                        "installed_by": ["modules"]
+                    },
                     "samtools/flagstat": {
                         "branch": "master",
                         "git_sha": "9339809fcb90af8a8b7051e6cd914894d5c52002",
@@ -59,16 +84,6 @@
                         "branch": "master",
                         "git_sha": "9339809fcb90af8a8b7051e6cd914894d5c52002",
                         "installed_by": ["bam_sort_stats_samtools"]
-                    },
-                    "picard/markduplicates": {
-                        "branch": "master",
-                        "git_sha": "fe08122c3dc2f2d7890daba06f6c90e570ef01de",
-                        "installed_by": ["modules"]
-                    },
-                    "samtools/faidx": {
-                        "branch": "master",
-                        "git_sha": "9339809fcb90af8a8b7051e6cd914894d5c52002",
-                        "installed_by": ["modules"]
                     },
                     "samtools/sort": {
                         "branch": "master",

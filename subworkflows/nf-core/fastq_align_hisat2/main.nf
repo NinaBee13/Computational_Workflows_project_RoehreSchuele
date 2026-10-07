@@ -1,7 +1,7 @@
 include { HISAT2_ALIGN            } from '../../../modules/nf-core/hisat2/align/main'
 include { BAM_SORT_STATS_SAMTOOLS } from '../bam_sort_stats_samtools/main'
 
-workflow FASTQ_ALIGN_HISAT2 {
+workflow FASTQ_HISAT2_ALIGN {
     take:
     reads // channel: [ val(meta), [ reads ] ]
     index // channel: /path/to/hisat2/index
