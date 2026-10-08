@@ -26,3 +26,20 @@ sp:
     fn: "*gene_tpm.tsv"
 
 max_table_rows: 10000
+
+table_sample_merge:
+  "Trimmed R1":
+    type: regex
+    pattern: "_trimmed_1$"
+
+  "Trimmed R2":
+    type: regex
+    pattern: "_trimmed_2$"
+
+  "Raw R1":
+    type: regex
+    pattern: "_1$"
+
+  "Raw R2":
+    type: regex
+    pattern: "_2$"

@@ -1,19 +1,31 @@
-%%metro title: CW RNA-seq Roehre-Schuele
 %%metro style: nfcore
-
-%%metro line: main | RNA-seq workflow | #2196F3
-%%metro line: qc | Quality Control | #f33a21 
+%%metro files: input | FASTQ
+%%metro line: align | Alignment with HISAT2 | #ea4b40
+%%metro line: quant | Pseudoalignment and Quantification with Salmon | #2196F3 | dashed
 
 graph LR
-
     input[FASTQ files]
-    fastqc[FastQC]
-    
-    fastp[FASTP]
+    catfastq[CAT_FASTQ]
+    fastqcraw[FastQC]
+    fastqctrim[FastQC]
+    trim[FASTP]
+    hisat2[HISAT2]
+    Salmon[Salmon]
+    tximport[TPM table]
+    Picard[PICARD]
 
-    input -->|main| fastqc
-    fastqc --> |main| fastp
-    fastp ---> |main| fastqc
-    
 
-    
+    input -->|align| catfastq
+    catfastq --> |align|fastqcraw
+    fastqcraw --> |align| trim
+    trim --> |align| fastqctrim
+    fastqctrim -->|align| hisat2
+    hisat2 -->|align| Picard
+
+
+    input -->|quant| catfastq
+    catfastq --> |quant|fastqcraw
+    fastqcraw --> |quant| trim
+    trim --> |quant| fastqctrim
+    fastqctrim --> |quant| Salmon
+    Salmon --> |quant| tximport

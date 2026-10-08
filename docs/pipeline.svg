@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-     width="303" height="246" viewBox="0 0 303 246" style="color-scheme: light dark">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 536 286" preserveAspectRatio="xMinYMin meet" style="color-scheme: light dark">
 <defs>
 </defs>
-<metadata id="diagram-manifest" data-schema-version="1.0"><![CDATA[{"groups":[{"color":"#2196F3","id":"main","label":"RNA-seq workflow"},{"color":"#f33a21","id":"qc","label":"Quality Control"}],"height":246,"match":{"flags":"i","target":"fqProcessName","type":"regex"},"nodes":[{"groups":["main"],"h":10.0,"id":"input","label":"FASTQ files","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":80.0,"y":120.0},{"groups":["main"],"h":10.0,"id":"fastqc","label":"FastQC","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":140.0,"y":120.0},{"groups":["main"],"h":10.0,"id":"fastp","label":"FASTP","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":200.0,"y":120.0}],"regions":[],"title":"CW RNA-seq Roehre-Schuele","version":"1.0","width":303}]]></metadata>
+<metadata id="diagram-manifest" data-schema-version="1.0"><![CDATA[{"groups":[{"color":"#ea4b40","id":"align","label":"Alignment with HISAT2"},{"color":"#2196F3","id":"quant","label":"Pseudoalignment and Quantification with Salmon"}],"height":286,"match":{"flags":"i","target":"fqProcessName","type":"regex"},"nodes":[{"groups":["align","quant"],"h":14.0,"id":"input","label":"FASTQ files","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":80.0,"y":122.0},{"groups":["align","quant"],"h":14.0,"id":"catfastq","label":"CAT_FASTQ","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":140.0,"y":122.0},{"groups":["align","quant"],"h":14.0,"id":"fastqcraw","label":"FastQC","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":200.0,"y":122.0},{"groups":["align","quant"],"h":14.0,"id":"fastqctrim","label":"FastQC","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":320.0,"y":122.0},{"groups":["align","quant"],"h":14.0,"id":"trim","label":"FASTP","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":260.0,"y":122.0},{"groups":["align"],"h":10.0,"id":"hisat2","label":"HISAT2","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":416.0,"y":120.0},{"groups":["quant"],"h":10.0,"id":"Salmon","label":"Salmon","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":416.0,"y":164.0},{"groups":["quant"],"h":10.0,"id":"tximport","label":"TPM table","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":476.0,"y":164.0},{"groups":["align"],"h":10.0,"id":"Picard","label":"PICARD","patterns":[],"r":5.0,"rx":5.0,"w":10.0,"x":476.0,"y":120.0}],"regions":[],"title":"","version":"1.0","width":536}]]></metadata>
 <style>.nf-metro-bg { fill: var(--nfm-map-bg, light-dark(#f5f5f5, #2b2b2b)); }
 .nf-metro-title { fill: var(--nfm-map-title-color, light-dark(#111111, #ffffff)); }
 .nf-metro-station-label { fill: var(--nfm-map-label-color, light-dark(#333333, #e0e0e0)); }
@@ -15,29 +14,75 @@
 .nf-metro-legend-text { fill: var(--nfm-map-legend-text-color, light-dark(#333333, #e0e0e0)); }
 .nf-metro-marker-stroke { stroke: var(--nfm-map-marker-stroke, light-dark(#333333, #f0f0f0)); }
 .nf-metro-label-halo { fill: var(--nfm-map-bg, light-dark(#f5f5f5, #2b2b2b)); stroke: var(--nfm-map-bg, light-dark(#f5f5f5, #2b2b2b)); }</style>
-<rect x="0" y="0" width="303" height="246" fill="#2b2b2b" class="nf-metro-bg" />
-<text x="60.0" y="30.0" font-size="24.0" fill="#ffffff" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" class="nf-metro-title">CW RNA-seq Roehre-Schuele</text>
-<path d="M80.0,120.0 L140.0,120.0" stroke="#2196F3" stroke-width="3.0" stroke-linecap="round" class="metro-line-main" data-line-id="main" />
-<path d="M140.0,120.0 L200.0,120.0" stroke="#2196F3" stroke-width="3.0" stroke-linecap="round" class="metro-line-main" data-line-id="main" />
-<g class="nf-metro-station-group" data-node-id="input" data-node-cx="80.0" data-node-cy="120.0" data-node-r="5.0" data-node-groups="main" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
-<rect x="75.0" y="115.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="input" data-station-lines="main" data-station-label="FASTQ files" />
+<rect x="0" y="0" width="536" height="286" fill="#2b2b2b" class="nf-metro-bg" />
+<path d="M80.0,124.0 L140.0,124.0" stroke="#2196F3" stroke-width="3.0" stroke-linecap="round" class="metro-line-quant" data-line-id="quant" stroke-dasharray="8,4" />
+<path d="M140.0,124.0 L200.0,124.0" stroke="#2196F3" stroke-width="3.0" stroke-linecap="round" class="metro-line-quant" data-line-id="quant" stroke-dasharray="8,4" />
+<path d="M200.0,124.0 L260.0,124.0" stroke="#2196F3" stroke-width="3.0" stroke-linecap="round" class="metro-line-quant" data-line-id="quant" stroke-dasharray="8,4" />
+<path d="M260.0,124.0 L320.0,124.0" stroke="#2196F3" stroke-width="3.0" stroke-linecap="round" class="metro-line-quant" data-line-id="quant" stroke-dasharray="8,4" />
+<path d="M320.0,124.0 L337.0,124.0 Q347.0,124.0,353.0,132.0 L371.0,156.0 Q377.0,164.0,387.0,164.0 L416.0,164.0" stroke="#2196F3" stroke-width="3.0" fill="none" stroke-linecap="round" stroke-linejoin="round" class="metro-line-quant" data-line-id="quant" stroke-dasharray="8,4" />
+<path d="M416.0,164.0 L476.0,164.0" stroke="#2196F3" stroke-width="3.0" stroke-linecap="round" class="metro-line-quant" data-line-id="quant" stroke-dasharray="8,4" />
+<path d="M80.0,120.0 L140.0,120.0" stroke="#ea4b40" stroke-width="3.0" stroke-linecap="round" class="metro-line-align" data-line-id="align" />
+<path d="M140.0,120.0 L200.0,120.0" stroke="#ea4b40" stroke-width="3.0" stroke-linecap="round" class="metro-line-align" data-line-id="align" />
+<path d="M200.0,120.0 L260.0,120.0" stroke="#ea4b40" stroke-width="3.0" stroke-linecap="round" class="metro-line-align" data-line-id="align" />
+<path d="M260.0,120.0 L320.0,120.0" stroke="#ea4b40" stroke-width="3.0" stroke-linecap="round" class="metro-line-align" data-line-id="align" />
+<path d="M320.0,120.0 L416.0,120.0" stroke="#ea4b40" stroke-width="3.0" stroke-linecap="round" class="metro-line-align" data-line-id="align" />
+<path d="M416.0,120.0 L476.0,120.0" stroke="#ea4b40" stroke-width="3.0" stroke-linecap="round" class="metro-line-align" data-line-id="align" />
+<g class="nf-metro-station-group" data-node-id="input" data-node-cx="80.0" data-node-cy="122.0" data-node-r="5.0" data-node-groups="align,quant" data-node-w="10.0" data-node-h="14.0" data-node-rx="5.0">
+<rect x="75.0" y="115.0" width="10.0" height="14.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="input" data-station-lines="align,quant" data-station-label="FASTQ files" />
+<g data-station-id="input">
+<path d="M38.8,101.8 L56.8,101.8 L64.8,109.8 L64.8,131.8 Q64.8,133.8,62.8,133.8 L38.8,133.8 Q36.8,133.8,36.8,131.8 L36.8,103.8 Q36.8,101.8,38.8,101.8 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M56.8,101.8 L56.8,109.8 L64.8,109.8 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M56.8,101.8 L56.8,109.8 L64.8,109.8" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<path d="M43.0,106.0 L61.0,106.0 L69.0,114.0 L69.0,136.0 Q69.0,138.0,67.0,138.0 L43.0,138.0 Q41.0,138.0,41.0,136.0 L41.0,108.0 Q41.0,106.0,43.0,106.0 Z" fill="#ffffff" stroke="#333333" stroke-width="1.5" stroke-linejoin="round" />
+<path d="M61.0,106.0 L61.0,114.0 L69.0,114.0 Z" fill="#333333" opacity="0.15" stroke="none" />
+<path d="M61.0,106.0 L61.0,114.0 L69.0,114.0" fill="none" stroke="#333333" stroke-width="0.8999999999999999" />
+<text x="55.0" y="123.2" font-size="7.5" fill="#000000" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dy="0.3em">FASTQ</text>
 </g>
-<g class="nf-metro-station-group" data-node-id="fastqc" data-node-cx="140.0" data-node-cy="120.0" data-node-r="5.0" data-node-groups="main" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
-<rect x="135.0" y="115.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="fastqc" data-station-lines="main" data-station-label="FastQC" />
 </g>
-<g class="nf-metro-station-group" data-node-id="fastp" data-node-cx="200.0" data-node-cy="120.0" data-node-r="5.0" data-node-groups="main" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
-<rect x="195.0" y="115.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="fastp" data-station-lines="main" data-station-label="FASTP" />
+<g class="nf-metro-station-group" data-node-id="catfastq" data-node-cx="140.0" data-node-cy="122.0" data-node-r="5.0" data-node-groups="align,quant" data-node-w="10.0" data-node-h="14.0" data-node-rx="5.0">
+<rect x="135.0" y="115.0" width="10.0" height="14.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="catfastq" data-station-lines="align,quant" data-station-label="CAT_FASTQ" />
 </g>
-<text x="80.0" y="131.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">FASTQ files</text>
-<text x="80.0" y="131.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="input" class="nf-metro-station-label">FASTQ files</text>
-<text x="140.0" y="106.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="auto">FastQC</text>
-<text x="140.0" y="106.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="auto" data-station-id="fastqc" class="nf-metro-station-label">FastQC</text>
-<text x="200.0" y="131.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">FASTP</text>
-<text x="200.0" y="131.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="fastp" class="nf-metro-station-label">FASTP</text>
-<rect x="60.0" y="150.0" width="183.20000000000002" height="72.0" rx="6" ry="6" fill="rgba(0, 0, 0, 0.3)" class="nf-metro-legend-bg" />
-<path d="M72.0,174.0 L96.0,174.0" stroke="#2196F3" stroke-width="3.0" stroke-linecap="round" />
-<text x="108.0" y="174.0" font-size="14.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" dy="0.3em" class="nf-metro-legend-text">RNA-seq workflow</text>
-<path d="M72.0,198.0 L96.0,198.0" stroke="#f33a21" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="8,4" />
-<text x="108.0" y="198.0" font-size="14.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" dy="0.3em" class="nf-metro-legend-text">Quality Control</text>
-<text x="273.0" y="238.0" font-size="8" fill="rgba(150, 150, 150, 0.6)" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="end">created with nf-metro v2.0.0</text>
+<g class="nf-metro-station-group" data-node-id="fastqcraw" data-node-cx="200.0" data-node-cy="122.0" data-node-r="5.0" data-node-groups="align,quant" data-node-w="10.0" data-node-h="14.0" data-node-rx="5.0">
+<rect x="195.0" y="115.0" width="10.0" height="14.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="fastqcraw" data-station-lines="align,quant" data-station-label="FastQC" />
+</g>
+<g class="nf-metro-station-group" data-node-id="fastqctrim" data-node-cx="320.0" data-node-cy="122.0" data-node-r="5.0" data-node-groups="align,quant" data-node-w="10.0" data-node-h="14.0" data-node-rx="5.0">
+<rect x="315.0" y="115.0" width="10.0" height="14.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="fastqctrim" data-station-lines="align,quant" data-station-label="FastQC" />
+</g>
+<g class="nf-metro-station-group" data-node-id="trim" data-node-cx="260.0" data-node-cy="122.0" data-node-r="5.0" data-node-groups="align,quant" data-node-w="10.0" data-node-h="14.0" data-node-rx="5.0">
+<rect x="255.0" y="115.0" width="10.0" height="14.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="trim" data-station-lines="align,quant" data-station-label="FASTP" />
+</g>
+<g class="nf-metro-station-group" data-node-id="hisat2" data-node-cx="416.0" data-node-cy="120.0" data-node-r="5.0" data-node-groups="align" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="411.0" y="115.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="hisat2" data-station-lines="align" data-station-label="HISAT2" />
+</g>
+<g class="nf-metro-station-group" data-node-id="Salmon" data-node-cx="416.0" data-node-cy="164.0" data-node-r="5.0" data-node-groups="quant" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="411.0" y="159.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="Salmon" data-station-lines="quant" data-station-label="Salmon" />
+</g>
+<g class="nf-metro-station-group" data-node-id="tximport" data-node-cx="476.0" data-node-cy="164.0" data-node-r="5.0" data-node-groups="quant" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="471.0" y="159.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="tximport" data-station-lines="quant" data-station-label="TPM table" />
+</g>
+<g class="nf-metro-station-group" data-node-id="Picard" data-node-cx="476.0" data-node-cy="120.0" data-node-r="5.0" data-node-groups="align" data-node-w="10.0" data-node-h="10.0" data-node-rx="5.0">
+<rect x="471.0" y="115.0" width="10.0" height="10.0" rx="5.0" ry="5.0" fill="#ffffff" stroke="#333333" stroke-width="1.5" class="nf-metro-station" data-station-id="Picard" data-station-lines="align" data-station-label="PICARD" />
+</g>
+<text x="140.0" y="106.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="auto">CAT_FASTQ</text>
+<text x="140.0" y="106.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="auto" data-station-id="catfastq" class="nf-metro-station-label">CAT_FASTQ</text>
+<text x="200.0" y="135.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">FastQC</text>
+<text x="200.0" y="135.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="fastqcraw" class="nf-metro-station-label">FastQC</text>
+<text x="260.0" y="106.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="auto">FASTP</text>
+<text x="260.0" y="106.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="auto" data-station-id="trim" class="nf-metro-station-label">FASTP</text>
+<text x="320.0" y="135.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">FastQC</text>
+<text x="320.0" y="135.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="fastqctrim" class="nf-metro-station-label">FastQC</text>
+<text x="416.0" y="106.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="auto">HISAT2</text>
+<text x="416.0" y="106.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="auto" data-station-id="hisat2" class="nf-metro-station-label">HISAT2</text>
+<text x="416.0" y="150.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="auto">Salmon</text>
+<text x="416.0" y="150.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="auto" data-station-id="Salmon" class="nf-metro-station-label">Salmon</text>
+<text x="476.0" y="131.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">PICARD</text>
+<text x="476.0" y="131.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="Picard" class="nf-metro-station-label">PICARD</text>
+<text x="476.0" y="175.0" font-size="13.0" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3.0" stroke-linejoin="round" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" aria-hidden="true" class="nf-metro-label-halo" text-anchor="middle" dominant-baseline="hanging">TPM table</text>
+<text x="476.0" y="175.0" font-size="13.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="hanging" data-station-id="tximport" class="nf-metro-station-label">TPM table</text>
+<rect x="60.0" y="190.0" width="414.20000000000005" height="72.0" rx="6" ry="6" fill="rgba(0, 0, 0, 0.3)" class="nf-metro-legend-bg" />
+<path d="M72.0,214.0 L96.0,214.0" stroke="#ea4b40" stroke-width="3.0" stroke-linecap="round" />
+<text x="108.0" y="214.0" font-size="14.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" dy="0.3em" class="nf-metro-legend-text">Alignment with HISAT2</text>
+<path d="M72.0,238.0 L96.0,238.0" stroke="#2196F3" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="8,4" />
+<text x="108.0" y="238.0" font-size="14.0" fill="#e0e0e0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" dy="0.3em" class="nf-metro-legend-text">Pseudoalignment and Quantification with Salmon</text>
+<text x="506.0" y="278.0" font-size="8" fill="rgba(150, 150, 150, 0.6)" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="end">created with nf-metro v2.0.0</text>
 </svg>
