@@ -26,6 +26,30 @@
 
 > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.
 
+- [SAMtools](https://pubmed.ncbi.nlm.nih.gov/19505943/)
+
+> Li H, Handsaker B, Wysoker A, Fennell T, Ruan J, Homer N, Marth G, Abecasis G, Durbin R; 1000 Genome Project Data Processing Subgroup. The Sequence Alignment/Map format and SAMtools. Bioinformatics. 2009 Aug 15;25(16):2078-9. doi: 10.1093/bioinformatics/btp352. Epub 2009 Jun 8. PubMed PMID: 19505943; PubMed Central PMCID: PMC2723002.
+
+- [Picard](https://broadinstitute.github.io/picard/)
+
+> Broad Institute. Picard Toolkit. Broad Institute, GitHub repository and software documentation. Available from: https://broadinstitute.github.io/picard/
+
+- [RSEM](https://pubmed.ncbi.nlm.nih.gov/21816040/)
+
+> Li B, Dewey CN. RSEM: accurate transcript quantification from RNA-Seq data with or without a reference genome. BMC Bioinformatics. 2011 Aug 4;12:323. doi: 10.1186/1471-2105-12-323. PubMed PMID: 21816040; PubMed Central PMCID: PMC3163565.
+
+- [Salmon](https://pubmed.ncbi.nlm.nih.gov/28263959/)
+
+> Patro R, Duggal G, Love MI, Irizarry RA, Kingsford C. Salmon provides fast and bias-aware quantification of transcript expression. Nat Methods. 2017 Apr;14(4):417-419. doi: 10.1038/nmeth.4197. Epub 2017 Mar 6. PubMed PMID: 28263959; PubMed Central PMCID: PMC5600148.
+
+- [tximport](https://pubmed.ncbi.nlm.nih.gov/26925227/)
+
+> Soneson C, Love MI, Robinson MD. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Res. 2015 Dec 30;4:1521. doi: 10.12688/f1000research.7563.2. PubMed PMID: 26925227; PubMed Central PMCID: PMC4712774.
+
+- [tximeta](https://pubmed.ncbi.nlm.nih.gov/32097405/)
+
+> Love MI, Soneson C, Hickey PF, Johnson LK, Pierce NT, Shepherd L, Morgan M, Patro R. Tximeta: Reference sequence checksums for provenance identification in RNA-seq. PLoS Comput Biol. 2020 Feb 25;16(2):e1007664. doi: 10.1371/journal.pcbi.1007664. PubMed PMID: 32097405; PubMed Central PMCID: PMC7059966.
+
 ## Software packaging/containerisation tools
 
 - [Anaconda](https://anaconda.com)

@@ -1,0 +1,19 @@
+%%metro title: CW RNA-seq Roehre-Schuele
+%%metro style: nfcore
+
+%%metro line: main | RNA-seq workflow | #2196F3
+%%metro line: qc | Quality Control | #f33a21 
+
+graph LR
+
+    input[FASTQ files]
+    fastqc[FastQC]
+    
+    fastp[FASTP]
+
+    input -->|main| fastqc
+    fastqc --> |main| fastp
+    fastp ---> |main| fastqc
+    
+
+    
