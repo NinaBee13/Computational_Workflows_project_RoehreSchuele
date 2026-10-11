@@ -74,9 +74,20 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     def ch_versions = channel.empty() // tracks the versions of tools
     def ch_multiqc_files = channel.empty() 
 
-    // for new test with multiple fastq:
+    // Auto concatenates fastq files of duplicate samples, if flag was set to true, throws an error otherwise:
+   if (params.concat_duplicate_samples == false) {
+
+        // read all lines of the samplesheet, skip the header, keep the first column (sample name)
+        def sample_names = file(params.input).readLines().drop(1).collect { line -> line.split(',')[0] }
+
+        // if removing repeated names makes the list shorter, there were duplicates
+        if (sample_names.size() != sample_names.unique().size()) {
+            error("Some Samples appear more than once in the Samplesheet. Please re-edit the Samplesheet to only contain unique Sample names or run with --concat_duplicate_samples true")
+        }
+}
     CAT_FASTQ(ch_samplesheet)
     ch_merged_reads = CAT_FASTQ.out.reads
+
 
     //
     // MODULE: Run FastQC
@@ -173,8 +184,10 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     
 
     ch_splicesites = HISAT2_EXTRACTSPLICESITES ( ch_gtf.map { [ [:], it ] } ).txt
-    //ch_versions    = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions)
-
+    //ch_versions    = ch_versions.mix(HISAT2_EXTRACTSPLICESITES.out.versions_hisat2)
+    ch_trimmed_reads.view { meta, reads ->
+    "TRIMMED READS: meta=${meta}, reads=${reads}"
+}
     // Build index:
     ch_hisat2_index = HISAT2_BUILD ( ch_fasta
     .concat(ch_gtf)
@@ -206,7 +219,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     
     //HISAT2_BUILD.out.index.view { "HISAT2 INDEX OUTPUT: $it" }
     //
-    //ch_versions     = ch_versions.mix(HISAT2_BUILD.out.versions)
+    //ch_versions     = ch_versions.mix(HISAT2_BUILD.out.versions_hisat2)
  
     // Alignment using HISAT Align and subworkflow fastq_align_hisat2
     ch_hisat2_multiqc = Channel.empty()
@@ -301,8 +314,8 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
         CUSTOM_TX2GENE.out.tx2gene,
         'salmon'
     )
-    ch_multiqc_files = ch_multiqc_files.mix(
-    TXIMETA_TXIMPORT.out.tpm_gene.map { _meta, f -> f }
+
+    ch_multiqc_files = ch_multiqc_files.mix(TXIMETA_TXIMPORT.out.tpm_gene.map { _meta, f -> f }
 )
 
 

@@ -2,9 +2,10 @@
 
 ## Introduction
 
-**NinaBee13/cw-rnaseq-roehre-schuele** is a bioinformatics pipeline that ...
+**NinaBee13/cw-rnaseq-roehre-schuele** is a bioinformatics pipeline that ingests RNA sequencing data, and provides the user with a comprehensive summary of the processing steps within the pipeline. The input should have the form of a samplesheet, with FASTQ files, strandedness, and sample ids. This input is than processed by a series of rna-sep processing steps, such as Quality Control (FASTQC), trimming (FASTP), pseudo-/alignment (HISAT2, Salmon), marking of duplicate reads (PICARD).
 
 <!-- TODO nf-core:
+Thi
    Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
    major pipeline sections and the types of output it produces. You're giving an overview to someone new
    to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
@@ -32,8 +33,8 @@ First, prepare a samplesheet with your input data that looks as follows:
 `samplesheet.csv`:
 
 ```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+sample,fastq_1,fastq_2, strandedness
+CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz, 
 ```
 
 Each row represents a fastq file (single-end) or a pair of fastq files (paired end).

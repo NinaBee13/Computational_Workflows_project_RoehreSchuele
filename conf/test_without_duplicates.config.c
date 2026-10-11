@@ -1,0 +1,26 @@
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Nextflow config file for running full-size tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Defines input files and everything required to run a full size pipeline test.
+
+    Use as follows:
+        nextflow run NinaBee13/cw-rnaseq-roehre-schuele -profile test_full,<docker/singularity> --outdir <OUTDIR>
+
+----------------------------------------------------------------------------------------
+*/
+
+params {
+    config_profile_name        = 'No_duplicates_test'
+    config_profile_description = 'Same test dataset, but without duplicate Samples'
+
+
+    input = "${projectDir}/tests/sample_sheet_test_without_duplicate.csv"
+        // Genome references
+    fasta              = "https://raw.githubusercontent.com/nf-core/test-datasets/7f1614baeb0ddf66e60be78c3d9fa55440465ac8/reference/genome.fasta"
+    
+    // gtf: necessary for workflows: HISAT2, tbc
+    gtf                = "https://raw.githubusercontent.com/nf-core/test-datasets/7f1614baeb0ddf66e60be78c3d9fa55440465ac8/reference/genes_with_empty_tid.gtf.gz"
+    
+
+}

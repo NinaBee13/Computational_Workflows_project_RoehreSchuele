@@ -40,6 +40,11 @@
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
+                },
+                "concat_duplicate_samples": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Concatenate Samples FASTQ files, if they appear multiples times in the Samplesheet."
                 }
             }
         },
