@@ -74,8 +74,8 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     def ch_versions = channel.empty() // tracks the versions of tools
     def ch_multiqc_files = channel.empty() 
 
-    // Auto concatenates fastq files of duplicate samples, if flag was set to true, throws an error otherwise:
-   if (params.concat_duplicate_samples == false) {
+    // Auto concatenates fastq files of duplicate samples, if flag was set to anything but false, throws an error otherwise:
+   if (params.concat_duplicate_samples == false || params.concat_duplicate_samples == 'false' ) {
 
         // read all lines of the samplesheet, skip the header, keep the first column (sample name)
         def sample_names = file(params.input).readLines().drop(1).collect { line -> line.split(',')[0] }
