@@ -74,6 +74,7 @@ workflow CW_RNASEQ_ROEHRE_SCHUELE {
     def ch_versions = channel.empty() // tracks the versions of tools
     def ch_multiqc_files = channel.empty() 
 
+
     // Auto concatenates fastq files of duplicate samples, if flag was set to anything but false, throws an error otherwise:
    if (params.concat_duplicate_samples == false || params.concat_duplicate_samples == 'false' ) {
 

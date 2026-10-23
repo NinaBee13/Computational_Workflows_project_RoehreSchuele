@@ -77,7 +77,7 @@ nextflow run Computational_Workflows_project_RoehreSchuele \
     -profile test_without_duplicates,docker \
     --outdir test_results
 ```
-This test set uses an modified samplesheet, without duplicate sample id's. Please note that if there are duplicate sample id's in the samplesheet, the pipeline will throw an error. If the intention is to merge these runs, this can be done using the flag --concat_duplicate_samples true. If this flag is set to anything but false, the pipeline will automatically merge the samples. The default setting for the flag is false. 
+This test set uses an modified samplesheet, without duplicate sample id's. Please note that if there are duplicate sample id's in the samplesheet, the pipeline will throw an error. If the intention is to merge these runs, this can be done using the flag --concat_duplicate_samples true. If this flag is set to true the pipeline will automatically merge the samples. The default setting for the flag is false. 
 
 See the minimal example run "test,docker" for merging samples with the same ID:
 ```bash
