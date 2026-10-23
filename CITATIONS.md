@@ -18,9 +18,9 @@
 
 > Chen S, Zhou Y, Chen Y, Gu J. fastp: an ultra-fast all-in-one FASTQ preprocessor. Bioinformatics. 2018 Sep 1;34(17):i884-i890. doi: 10.1093/bioinformatics/bty560. PubMed PMID: 30423086; PubMed Central PMCID: PMC6129281.
 
-- [HISAT2] (https://pubmed.ncbi.nlm.nih.gov/31375807/)
+- [HISAT2](https://pubmed.ncbi.nlm.nih.gov/31375807/)
 
-> Kim D, Paggi JM, Park C, Bennett C, Salzberg SL. Graph-based genome alignment and genotyping with HISAT2 and HISAT-genotype Graph-based genome alignment and genotyping with HISAT2 and HISAT-genotype. Nat Biotechnol. 2019 Aug;37(8):907-915. doi: 10.1038/s41587-019-0201-4. Epub 2019 Aug 2. PubMed PMID: 31375807.
+> Kim D, Paggi JM, Park C, Bennett C, Salzberg SL. Graph-based genome alignment and genotyping with HISAT2 and HISAT-genotype. Nat Biotechnol. 2019 Aug;37(8):907-915. doi: 10.1038/s41587-019-0201-4. Epub 2019 Aug 2. PubMed PMID: 31375807.
 
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
 
@@ -50,6 +50,21 @@
 
 > Love MI, Soneson C, Hickey PF, Johnson LK, Pierce NT, Shepherd L, Morgan M, Patro R. Tximeta: Reference sequence checksums for provenance identification in RNA-seq. PLoS Comput Biol. 2020 Feb 25;16(2):e1007664. doi: 10.1371/journal.pcbi.1007664. PubMed PMID: 32097405; PubMed Central PMCID: PMC7059966.
 
+  - [STAR](https://pubmed.ncbi.nlm.nih.gov/23104886/)
+
+  > Dobin A, Davis CA, Schlesinger F, Drenkow J, Zaleski C, Jha S, Batut P, Chaisson M, Gingeras TR. STAR: ultrafast universal RNA-seq aligner Bioinformatics. 2013 Jan 1;29(1):15-21. doi: 10.1093/bioinformatics/bts635. Epub 2012 Oct 25. PubMed PMID: 23104886; PubMed Central PMCID: PMC3530905.
+## R Packages
+ - [R](https://www.r-project.org/)
+
+  > R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+
+ [Tximeta](https://pubmed.ncbi.nlm.nih.gov/32097405/)
+
+  >Love MI, Soneson C, Hickey PF, Johnson LK, Pierce NT, Shepherd L, Morgan M, Patro R. Tximeta: Reference sequence checksums for provenance identification in RNA-seq PLoS Comput Biol. 2020 Feb 25;16(2):e1007664. doi: 10.1371/journal.pcbi.1007664. eCollection 2020 Feb. PubMed PMID: 32097405; PubMed Central PMCID: PMC7059966.
+
+ [Summarized Experiment](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html)
+
+  >Morgan M, Obenchain V, Hester J and Pagès H (2020). SummarizedExperiment: SummarizedExperiment container.
 ## Software packaging/containerisation tools
 
 - [Anaconda](https://anaconda.com)
@@ -71,3 +86,7 @@
 - [Singularity](https://pubmed.ncbi.nlm.nih.gov/28494014/)
 
   > Kurtzer GM, Sochat V, Bauer MW. Singularity: Scientific containers for mobility of compute. PLoS One. 2017 May 11;12(5):e0177459. doi: 10.1371/journal.pone.0177459. eCollection 2017. PubMed PMID: 28494014; PubMed Central PMCID: PMC5426675.
+  
+
+
+ 
