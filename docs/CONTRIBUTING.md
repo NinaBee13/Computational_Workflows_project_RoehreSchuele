@@ -3,12 +3,12 @@ title: Contributing
 markdownPlugin: checklist
 ---
 
-# `NinaBee13/cw-rnaseq-roehre-schuele`: Contributing guidelines
+# `NinaBee13/Computational_Workflows_project_RoehreSchuele: Contributing guidelines
 
 Hi there!
 Thanks for taking an interest in improving NinaBee13/cw-rnaseq-roehre-schuele.
 
-This page describes the recommended nf-core way to contribute to both NinaBee13/cw-rnaseq-roehre-schuele and nf-core pipelines in general, including:
+This page describes the recommended nf-core way to contribute to both NinaBee13/Computational_Workflows_project_RoehreSchuele and nf-core pipelines in general, including:
 
 - [General contribution guidelines](#general-contribution-guidelines): common procedures or guides across all nf-core pipelines.
 - [Pipeline-specific contribution guidelines](#pipeline-specific-contribution-guidelines): procedures or guides specific to the development conventions of NinaBee13/cw-rnaseq-roehre-schuele.
@@ -82,7 +82,7 @@ These tests are run with the latest available version of Nextflow and the minimu
 
 ### Pipeline contribution conventions
 
-nf-core semi-standardises how you write code and other contributions to make the NinaBee13/cw-rnaseq-roehre-schuele code and processing logic more understandable for new contributors and to ensure quality.
+nf-core semi-standardises how you write code and other contributions to make the NinaBee13/Computational_Workflows_project_RoehreSchuele code and processing logic more understandable for new contributors and to ensure quality.
 
 #### Add a new pipeline step
 
@@ -150,6 +150,4 @@ nf-core pipelines bump-version --nextflow . <min_nf_version>
 
 If you update images or graphics, follow the nf-core [style guidelines](https://nf-co.re/docs/community/brand/workflow-schematics).
 
-## Pipeline specific contribution guidelines
 
-<!-- TODO nf-core: Add any pipeline specific contribution guidelines here, such as coding styles, procedures, checklists etc. -->
