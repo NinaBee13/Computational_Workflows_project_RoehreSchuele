@@ -1,7 +1,10 @@
-%%metro style: nfcore
+%%metro style: light
+%%metro height: 200
 %%metro files: input | FASTQ
+%%metro files: output | HTML Report
 %%metro line: align | Alignment with HISAT2 | #ea4b40
 %%metro line: quant | Pseudoalignment and Quantification with Salmon | #2196F3 | dashed
+%%metro legend: none
 
 graph LR
     input[FASTQ files]
@@ -13,6 +16,7 @@ graph LR
     Salmon[Salmon]
     tximport[TPM table]
     Picard[PICARD]
+    multiqc[MultiQC]
 
 
     input -->|align| catfastq
@@ -21,6 +25,7 @@ graph LR
     trim --> |align| fastqctrim
     fastqctrim -->|align| hisat2
     hisat2 -->|align| Picard
+    Picard --> |align| multiqc
 
 
     input -->|quant| catfastq
@@ -29,3 +34,7 @@ graph LR
     trim --> |quant| fastqctrim
     fastqctrim --> |quant| Salmon
     Salmon --> |quant| tximport
+    tximport --> |quant| multiqc
+
+    multiqc --> |align| output
+    multiqc --> |quant| output
